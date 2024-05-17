@@ -1,0 +1,100 @@
+*, *::before, *::after { 
+    @apply box-border
+}
+
+body, html{
+    @apply m-0 p-0 
+  }
+  
+
+.light{
+    @apply bg-white text-black
+}
+
+.dark{
+    @apply bg-black/80 text-white
+}  
+
+.menu-dropdown{
+    @apply absolute w-[170px] md:w-[200px] px-1 md:px-3 py-0 md:py-5 top-[65px] right-[8px] md:right-[20px] border-solid border-2 border-slate-500 bg-white rounded-lg text-slate-500
+}
+
+.menu-dropdown::before{
+    @apply absolute top-[-5px] right-[20px] h-[20px] w-[20px] transform rotate-45
+}
+
+.menu-dropdown.active{
+    @apply opacity-100 visible transform translate-y-0 transition duration-500 ease-linear
+}
+
+.menu-dropdown.inactive{
+    @apply opacity-0 hidden -translate-y-20 transition duration-500 ease-linear
+}
+
+.dropdown-list{
+    @apply flex justify-center items-center
+}
+
+.dropdown-list:hover{
+    @apply text-red-500 
+}
+
+.dropdown-a{
+    @apply  flex items-center gap-x-3 ml-[3px] transition duration-500 my-1 cursor-pointer focus:text-red-500
+}
+
+.btn{
+    @apply rounded-lg p-3 bg-slate-500 mx-5 my-20 text-white font-bold text-center
+}
+
+.input-container{
+    @apply relative
+}
+
+.input-box{
+    @apply pl-8 h-10 border-solid border-slate-500 md:border-4 border-2 rounded-md my-5 mx-5 p-4 outline-none
+}
+
+.input-icon{
+    @apply absolute left-56 top-[30%] translate-y-1/2
+}
+
+.underline-hover{
+    @apply
+    inline-block
+    relative
+    cursor-pointer
+    transition-all
+    duration-500
+    before:content-['']
+    before:absolute
+    before:-bottom-1
+    before:left-1/2
+    before:-translate-x-1/2
+    before:w-0
+    before:h-1
+    before:rounded-full
+    before:opacity-0
+    before:transition-all
+    before:duration-500
+    before:bg-gradient-to-r
+    before:from-gray-600
+    before:via-slate-400
+    before:to-zinc-500
+    hover:before:w-full
+    hover:before:opacity-100
+};
+
+
+.custom-popup {
+    @apply bg-white border-gray-600 border-2 rounded-md
+  }
+  
+  .custom-title {
+    @apply text-black text-xl
+  }
+  
+  .custom-confirm-button {
+    @apply bg-gray-400 text-white
+  }
+
