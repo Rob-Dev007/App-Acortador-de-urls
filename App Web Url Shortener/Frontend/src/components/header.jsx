@@ -1,4 +1,3 @@
-
 import { FaGithub, FaLink, FaSun, FaMoon, FaDesktop } from 'react-icons/fa';
 import DropDownBtn from './dropDownBtn';
 import { Link } from 'react-router-dom';
@@ -41,7 +40,8 @@ const Header = ( )=>{
                 < FaLink />
             </div>
             <div className='flex justify-between gap-5 items-center'>
-                <h3 className='font-bold'>Sign In</h3>
+                <Link to='/login' className='font-bold'>Sign In</Link>
+                <Link to='/registrar' className='font-bold'>Sign Up</Link>
                 <FaGithub />
                 <h3 className='flex items-center gap-1 font-bold'>Theme 
                 <span> 
