@@ -18,7 +18,7 @@ const Registrate = ()=>{
         e.preventDefault();
         
         if( [nombres, apellidos, correo, password, repetirPassword].includes('') ){
-            setAlerta({msg:'Existen campos vacios, llene todo el formulario', error: true});
+            setAlerta({msg:'Todos los campos son obligatorios', error: true});
         };
     
         if(password !== repetirPassword){
@@ -100,7 +100,7 @@ const Registrate = ()=>{
                 <input 
                 type="submit"
                 value="Registrate"
-                className="my-3 border-2 rounded bg-gray-400 text-xl p-2 md:w-44 justify-center hover:bg-slate-500 font-bold"
+                className="block text-center my-1 text-lg rounded-full border-4 p-2 hover:bg-slate-500 hover:text-white transition-all duration-500 transform ease-out font-bold"
                 />
                 <nav className="md:flex md:justify-between gap-4">
                     <Link to='/login' className="block text-center my-1 text-sm">¿Ya tienes una cuenta? <strong>Ingresa</strong></Link>

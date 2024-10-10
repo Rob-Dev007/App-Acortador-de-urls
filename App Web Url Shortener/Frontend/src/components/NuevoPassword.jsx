@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import Alerta from "../helpers/Alerta";
 import clienteAxios from "../config/axios";
 
@@ -7,6 +7,7 @@ const NuevoPassword = ()=>{
 
     const [ password, setPassword ] = useState('');
     const [ tokenValido, setTokenValido ] = useState(false);
+    const [ passwordModificado, setPasswordModificado ] = useState(false);
     const [ alerta, setAlerta ] = useState({});
 
     const params = useParams();
@@ -33,8 +34,33 @@ const NuevoPassword = ()=>{
 
     const handleSubmit = async e =>{
         e.preventDefault();
-        
+
+        if(password.length < 8){
+            setAlerta({
+                msg: 'Password debe contener minimo 8 caracteres', 
+                error: true
+            })
+            return
+        };
+
+        setPasswordModificado(true);
+
+        try{
+            const url =`user/olvide-password/${token}`;
+            const {data} = await clienteAxios.post(url, { password });
+
+            setAlerta({
+                msg: data.msg
+            })
+        }catch(error){
+            setAlerta({
+                msg: error.responde.data.msg,
+                error: true
+            })
+        }
+
     }
+
     
     const { msg } = alerta;
     return(
@@ -45,7 +71,8 @@ const NuevoPassword = ()=>{
                     alerta = { alerta }
                 />}
                 { tokenValido &&(
-                    <form 
+                    <>
+                        <form 
                         onSubmit={ handleSubmit }
                         className="flex flex-col w-full gap-4">
                             <label className="font-bold my-2">Nueva contraseña</label>
@@ -62,7 +89,11 @@ const NuevoPassword = ()=>{
                                 value="Restablecer contraseña"
                                 className="my-3 border-2 rounded bg-gray-400 text-xl p-2 md:w-60 justify-center hover:bg-slate-500 font-bold"
                             />
-                    </form>
+                        </form>
+                        { passwordModificado && 
+                        <Link to='/login' className="block text-center my-1 text-lg rounded-full border-4 p-2 hover:bg-slate-500 hover:text-white transition-all duration-500 transform ease-out"><strong>Inicia sesión</strong></Link> 
+                        } 
+                    </>
                 )}   
             </div>   
         </div>
