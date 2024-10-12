@@ -44,7 +44,7 @@ const Registrate = ()=>{
     const { msg } = alerta;
 
     return(
-        <div id="registrar" className="container mx-auto p-8 md:grid md:grid-col justify-center">
+        <div id="registrar" className="container mx-auto p-8 md:grid md:grid-col justify-center items-center">
             <h2 className="font-bold text-3xl my-8 text-center">Registrate</h2>
             {msg && <Alerta 
                 alerta={ alerta }
@@ -100,11 +100,11 @@ const Registrate = ()=>{
                 <input 
                 type="submit"
                 value="Registrate"
-                className="block text-center my-1 text-lg rounded-full border-4 p-2 hover:bg-slate-500 hover:text-white transition-all duration-500 transform ease-out font-bold"
+                className="block text-center my-2 text-lg rounded-full border-4 p-2 hover:bg-slate-500 hover:text-white transition-all duration-500 transform ease-out font-bold"
                 />
                 <nav className="md:flex md:justify-between gap-4">
-                    <Link to='/login' className="block text-center my-1 text-sm">¿Ya tienes una cuenta? <strong>Ingresa</strong></Link>
-                    <Link to='/olvide-password' className="block text-center my-1 text-sm">¿Olvidaste tu contraseña? <strong>Recuperala</strong></Link>
+                    <Link to='/login' className="block text-center my-1 text-sm hover:text-black/50">¿Ya tienes una cuenta? <strong>Ingresa</strong></Link>
+                    <Link to='/olvide-password' className="block text-center my-1 text-sm hover:text-black/50">¿Olvidaste tu contraseña? <strong>Recuperala</strong></Link>
                 </nav>
             </form>
         </div>

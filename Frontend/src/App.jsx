@@ -11,13 +11,14 @@ function App() {
 
   return (
       
-       <AuthProvider>
+       
         <BrowserRouter >
-          <ThemeProvider  >
-            <AppContent />
-          </ThemeProvider >
+          <AuthProvider>
+            <ThemeProvider  >
+              <AppContent />
+            </ThemeProvider >
+          </AuthProvider>
         </BrowserRouter>
-       </AuthProvider>
   )
 }
 
