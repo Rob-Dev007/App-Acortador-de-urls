@@ -1,10 +1,16 @@
-import { Link } from "react-router-dom";
-import { FaSearch, FaLink, FaCog} from "react-icons/fa";
+import UseAuth from "../hooks/UseAuth";
+import { Outlet, Navigate } from "react-router-dom";
 
-const HeaderSettings = ()=>{
-    return(
+const Dashboard =()=>{
+
+    const { auth, cargando } = UseAuth();
+    if(cargando) return 'cargando....'
+
+    console.log(auth);
+
+    return (
         <div className="my-12" id='dashboard'>
-        <nav className="flex justify-center">
+        {/*<nav className="flex justify-center">
             <ul className="flex py-3 gap-8">
                 <li>
                     <Link className="font-bold text-xl flex items-center justify-center gap-1 underline-hover" to='/dashboard'>Enlaces <FaLink /></Link>
@@ -21,9 +27,15 @@ const HeaderSettings = ()=>{
         placeholder="Encuentra tu link"
         />
         <FaSearch className="input-icon"/>
+        </div>*/}
+
+            <Outlet />
+            {auth?._id ? <Outlet /> : <Navigate to='/' />}
+
         </div>
-        </div>
+        
     )
+    
 };
 
-export default HeaderSettings;
+export default Dashboard;

@@ -37,7 +37,7 @@ const Home = ()=>{
             setError('');
 
         } catch (error) {
-            setError('¡ERROR! Por favor, inténtalo de nuevamente.');
+            setError('¡ERROR! Por favor, inténtalo nuevamente.');
         }
     }
 

@@ -1,4 +1,3 @@
-import HeaderSettings from "./headerSettings";
 import { FaSave, FaTrashAlt, FaDownload } from "react-icons/fa";
 
 const Configuracion = ()=>{

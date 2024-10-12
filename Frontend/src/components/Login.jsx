@@ -1,5 +1,4 @@
-import { Link } from "react-router-dom";
-import UseAuth from "../hooks/useAuth";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Alerta from "../helpers/Alerta";
 import clienteAxios from "../config/axios";
@@ -8,11 +7,12 @@ import clienteAxios from "../config/axios";
 
 const Login = ()=>{
 
-    const { auth } = UseAuth();
 
     const [ correo, setCorreo] = useState('');
     const [ password, setPassword ] = useState('');
     const [ alerta, setAlerta ] = useState({});
+
+    const navigate = useNavigate();
 
     const handleSubmit = async e=>{
         e.preventDefault();
@@ -27,12 +27,9 @@ const Login = ()=>{
 
         try{
             const { data } = await clienteAxios.post('user/login', { correo, password });
-
             localStorage.setItem('token', data.token)
 
-            setAlerta({
-                msg: data.msg
-            })
+            navigate('/dashboard');
 
         }catch(error){
             setAlerta({
@@ -44,7 +41,7 @@ const Login = ()=>{
 
     const { msg } = alerta;
     return(
-        <div id="login" className="container h-screen mx-auto md:grid grid-col justify-center items-center">
+        <div id="login" className="container mx-auto p-8 md:grid md:grid-col justify-center items-center h-screen">
              <h2 className="font-bold text-3xl my-4 text-center">Ingresa a tu cuenta</h2>
             { msg && 
             <Alerta 
@@ -52,7 +49,7 @@ const Login = ()=>{
             /> }
             <form 
             onSubmit={ handleSubmit }
-            className="flex flex-col px-4 py-8 w-[440px] gap-2 shadow-xl rounded-xl">
+            className="flex flex-col px-4 py-8 gap-2 shadow-xl rounded-xl">
                 <label className="font-bold">Correo</label>
                 <input 
                 type="email"
@@ -60,7 +57,7 @@ const Login = ()=>{
                 value={ correo }
                 onChange={ e => { setCorreo(e.target.value) } }
                 placeholder="Ingresa tu email"
-                className="p-2 rounded outline-none border-b-4 border-b-black text-xl placeholder:text-xl"
+                className="bg-gray-400 p-2 rounded outline-none border-b-4 border-b-gray-500 text-xl focus:border-b focus:border-black focus:border-b-4 hover:border-black placeholder:text-white"
                 />
                 <label className="font-bold">Contraseña</label>
                 <input 
@@ -69,12 +66,12 @@ const Login = ()=>{
                 value={ password }
                 onChange={ e => { setPassword(e.target.value) } }
                 placeholder="Ingresa tu contraseña"
-                className="p-2 rounded outline-none border-b-4 border-b-black text-xl placeholder:text-xl"
+                className="bg-gray-400 p-2 rounded outline-none border-b-4 border-b-gray-500 text-xl focus:border-b focus:border-black focus:border-b-4 hover:border-black placeholder:text-white"
                 />
                 <input 
                 type="submit"
                 value="Inicia sesión"
-                className="block text-center my-1 text-lg rounded-full border-4 p-2 hover:bg-slate-500 hover:text-white transition-all duration-500 transform ease-out font-bold"
+                className="block text-center my-1 text-lg rounded-full border-4 p-2 hover:bg-slate-500 hover:text-white transition-all duration-500 transform ease-out font-bold my-2"
                 />
                 <nav className="md:flex md:justify-between gap-4">
                     <Link className="block text-center my-1 text-sm hover:text-black/50" to='/registrar'>¿No tienes una cuenta? <strong> Registrate</strong></Link>
