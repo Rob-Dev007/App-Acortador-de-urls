@@ -38,7 +38,7 @@ const registrar = async (req, res)=>{
 const obtenerPerfil = (req, res)=>{
     const { user } = req;
 
-    res.send({ perfil: user });
+    res.send({ user });
 };
 
 const confirmar = async(req, res)=>{
