@@ -5,18 +5,23 @@
 body, html{
     @apply m-0 p-0 
   }
-  
 
-.light{
-    @apply bg-white text-black
+.color-primario{
+    color: #FFD700
+
+    
 }
 
-.dark{
+.lightTheme{
+    @apply bg-gray-50 text-black 
+}
+
+.darkTheme{
     @apply bg-black/80 text-white
 }  
 
 .menu-dropdown{
-    @apply absolute w-[170px] md:w-[200px] px-1 md:px-3 py-0 md:py-5 top-[65px] right-[8px] md:right-[20px] border-solid border-2 border-slate-500 bg-white rounded-lg text-slate-500
+    @apply absolute w-[170px] w-24  lg:w-[200px] px-1 md:px-3 py-0 md:py-5 top-[65px] right-[8px] md:right-[20px] border-solid border-2 border-slate-500 bg-white rounded-lg text-stone-400
 }
 
 .menu-dropdown::before{
@@ -44,7 +49,7 @@ body, html{
 }
 
 .btn{
-    @apply rounded-lg p-3 bg-slate-500 mx-5 my-20 text-white font-bold text-center
+    @apply rounded-lg p-3 bg-gradient-to-b from-stone-400 to-stone-800 mx-5 my-20 text-white font-bold text-center text-sm lg:text-lg hover:bg-gradient-to-b hover:from-stone-500 hover:to-stone-900 transition-all duration-500 ease-out
 }
 
 .input-container{
@@ -52,11 +57,11 @@ body, html{
 }
 
 .input-box{
-    @apply pl-8 h-10 border-solid border-slate-500 md:border-4 border-2 rounded-md my-5 mx-5 p-4 outline-none
+    @apply pl-8 border-solid border-slate-500 md:border-4 border-2 rounded-md p-2 outline-none
 }
 
 .input-icon{
-    @apply absolute left-56 top-[30%] translate-y-1/2
+    @apply absolute right-48 md:right-52 top-[17%] translate-y-1/2
 }
 
 .underline-hover{

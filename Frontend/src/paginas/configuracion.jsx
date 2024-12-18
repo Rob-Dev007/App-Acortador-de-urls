@@ -2,8 +2,7 @@ import { FaSave, FaTrashAlt, FaDownload } from "react-icons/fa";
 
 const Configuracion = ()=>{
     return(
-        <div className="" id="configuracion">
-            <HeaderSettings />
+        <div className="mx-auto container">
             <div className="m-4 md:m-8 border-solid rounded-lg border-slate-500 border-2 md:border-4">
             <form className="m-4 md:m-8 p-2 md:p-4">
                 <h2 className="text-3xl font-bold my-4">General</h2>

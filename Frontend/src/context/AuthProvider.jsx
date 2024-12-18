@@ -3,7 +3,7 @@ import clienteAxios from "../config/axios";
 
 const AuthContext = createContext();
 
-const AuthProvider = ({ children })=>{
+export const AuthProvider = ({ children })=>{
 
     const [ cargando, setCargando ] = useState(true);
     const [ auth, setAuth ] = useState({});
@@ -22,37 +22,37 @@ const AuthProvider = ({ children })=>{
                     "Content-Type" : "application/json",
                     Authorization : `Bearer ${token}`
                 }
-            }
+            };
 
             try{
                 const { data } = await clienteAxios('/user/perfil', config);
-
                 setAuth(data);
             }catch(error){
                 console.log(error.response.data.msg);
-                setAuth({})
+                setAuth({});
             }
-
             setCargando(false);
         };
-
         autenticarUsuario();
-        
-    },[])
+    },[]);
+
+    const cerrarSesion = ()=>{
+        localStorage.removeItem('token');
+        setAuth({})
+    };
 
     return (
         <AuthContext.Provider 
             value = {{
                 auth,
                 setAuth,
-                cargando
+                cargando,
+                cerrarSesion
             }}
         >
             { children }
         </AuthContext.Provider>
     );
 };
-
-export { AuthProvider };
 
 export default AuthContext;
