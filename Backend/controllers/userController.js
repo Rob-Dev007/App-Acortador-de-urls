@@ -4,7 +4,6 @@ import generarJWT from "../helpers/generarjwt.js";
 import registroEmail from "../helpers/registroEmail.js";
 import olvidePasswordEmail from "../helpers/olvidePasswordEmail.js";
 
-
 const registrar = async (req, res)=>{
     const { nombres, apellidos, correo } = req.body;
 
@@ -81,7 +80,12 @@ const autenticar = async(req, res)=>{
 
     if(await user.comprobarPassword(password)){
         //Autenticar
-        res.json({ token: generarJWT(user.id) });
+        res.json({
+            _id : user._id,
+            nombres : user.nombres,
+            apellidos : user.apellidos,
+            token : generarJWT(user.id)
+        });
     }else{
         const error = new Error('Password incorrecto');
         return res.status(404).json({ msg: error.message })
@@ -150,7 +154,9 @@ const nuevoPassword = async(req, res)=>{
         console.log(error);
     }
 
-}
+};
+
+
 
 export {
     registrar,
@@ -159,5 +165,5 @@ export {
     autenticar,
     olvidePassword,
     comprobarToken,
-    nuevoPassword
+    nuevoPassword,
 }

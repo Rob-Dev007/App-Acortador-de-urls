@@ -1,22 +1,23 @@
 import { Routes, Route } from "react-router-dom";
-import { useTheme } from "./themeProvider";
-
-import Dashboard from './Dashboard';
-import Home from './home';
-import Configuracion from './configuracion'
-import Login from "./Login";
-import Registrate from "./Registrate";
-import ConfirmarCuenta from "./ConfirmarCuenta";
-import OlvidePassword from "./OlvidePassword";
-import NuevoPassword from "./NuevoPassword";
+import Home from '../paginas/home'
+import Configuracion from '../paginas/configuracion'
+import Login from "../paginas/Login";
+import Registrate from "../paginas/Registrate";
+import ConfirmarCuenta from "../paginas/ConfirmarCuenta";
+import OlvidePassword from "../paginas/OlvidePassword";
+import NuevoPassword from "../paginas/NuevoPassword";
+import Dashboard from "../paginas/Dashboard";
 import HeaderAndFooter from "../layout/HeaderAndFooter";
+import RutaProtegida from "../layout/RutasProtegidas";
+import UseTheme from "../hooks/UseTheme";
+
 
 const AppContent = ()=>{
 
-    const { theme } = useTheme();
+  const { theme } = UseTheme();
 
     return(
-    <div className={`${theme}`}>
+        <div className = {`${theme === 'dark' ? 'darkTheme' : 'lightTheme'} h-min-screen w-full`}>
           <Routes>
             <Route path="/" element={ <HeaderAndFooter />}>
               {/*Ruta publica*/}
@@ -28,12 +29,12 @@ const AppContent = ()=>{
               <Route path="confirmar/:id" element={ <ConfirmarCuenta /> } />
             </Route>
              {/*Ruta privada*/}
-            <Route path="/dashboard" element={ <Dashboard /> }>
-                <Route path='dashboard/configuracion' element={ <Configuracion /> } />
+            <Route path="/dashboard" element={ <RutaProtegida /> }>
+                <Route index element={ <Dashboard /> } />
+                <Route path='configuracion' element={ <Configuracion /> } />
             </Route>
           </Routes>
-    </div>
-
+        </div>
     )
 
 };
