@@ -34,7 +34,7 @@ const ConfirmarCuenta = ()=>{
     },[]);
 
     return(
-        <div id="confirmar" className="container h-screen mx-auto p-8 flex flex-col items-center justify-center">
+        <div id="confirmar" className="container mx-auto p-8 flex flex-col items-center justify-center">
         <h2 className="font-bold text-3xl mt-24 text-center">Confirma tu cuenta y empieza a gestionar tus enlaces</h2>
             <div className="flex flex-col px-4 py-8 gap-2 shadow-xl rounded-xl">
                 {!cargando && 

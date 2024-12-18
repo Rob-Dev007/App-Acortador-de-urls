@@ -3,15 +3,26 @@ import { FaCut } from "react-icons/fa";
 import { useState } from "react";
 import { FaClipboard } from "react-icons/fa";
 import Swal from "sweetalert2";
+import UseTheme from "../hooks/UseTheme";
+import Alerta from "../helpers/Alerta"
 
 const Home = ()=>{
 
     const [ originalUrl, setOriginalUrl ] = useState('');
     const [ shortLink, setShortLink ] = useState('');
-    const [ error, setError ] = useState('');
+    const [ alerta, setAlerta ] = useState({});
 
-    const readInput = (e)=>{
-        setOriginalUrl(e.target.value);
+    const { theme } = UseTheme();
+
+    const handleSubmit = e=>{
+        e.preventDefault();
+
+        if(!originalUrl){
+            setAlerta({
+                msg: '¡ERROR! Por favor, inténtalo nuevamente.',
+                error: true
+            })
+        }
     };
 
     const urlShort = async ()=>{
@@ -37,7 +48,7 @@ const Home = ()=>{
             setError('');
 
         } catch (error) {
-            setError('¡ERROR! Por favor, inténtalo nuevamente.');
+            console.log(error);
         }
     }
 
@@ -61,31 +72,43 @@ const Home = ()=>{
         .catch((error) => console.log('Error al copiar el enlace', error))
     }
 
+    const { msg }= alerta
+
     return(
-        <div>
-            <div className="my-36">
+        <div className="h-min-screen">
+            <div className="my-24">
                 <h1 className="text-6xl text-center my-8">
-                    Gestor de Enlaces
+                    Acortador de Enlaces
                 </h1>
-                <h2 className="text-2xl md:text-3xl text-center mx-12">
-                    Esta App esta diseñada para acortar tus links y te ayudará a administrar tus enlaces
+                <h2 className="text-2xl md:text-3xl text-center mx-8 my-20">
+                    App web diseñada para acortar enlaces, registrate y podrás almacenar y administrar tus enlaces
                 </h2>
             </div>
             <div className="mx-4 md:mx-28 lg:mx-96">
-                <input 
-                className="flex h-12 w-full bg-slate-200 outline-none p-3 rounded-md md:text-xl text-lg" 
-                placeholder="Recorta tu url"
-                type="texto"
-                value={ originalUrl }
-                onChange={ readInput }/>
-                <div className="flex justify-end mt-3 md:mt-2">
-                    <button className='flex items-center justify-center md:gap-3 gap-2 bg-slate-700 md:p-3 p-2 text-white rounded-lg font-bold'
-                    onClick={ urlShort }
-                    >
-                        Acorta el Url 
-                        <FaCut />
-                    </button >
+                <form
+                onSubmit={ handleSubmit }
+                >
+                    <input 
+                        className={`${ theme === 'dark' ? 'bg-gradient-to-r from-stone-700 to-transparent' : 'bg-gradient-to-b from-stone-300 to-transparent ' } flex h-12 w-full bg-gradient-to-tr from-stone-200 to-transparent outline-none p-3 rounded-md md:text-xl text-lg`}
+                        placeholder="Recorta tu url"
+                        type="texto"
+                        value={ originalUrl }
+                        onChange={ e => setOriginalUrl(e.target.value) }/>
+                    <div className="flex justify-end mt-3 md:mt-2 gap-8">
+                        <input 
+                        type="submit"
+                        value='Acorta el Url'
+                        className='flex items-center justify-center bg-slate-600 md:p-3 p-2 text-white rounded-lg font-bold text-sm lg:text-lg hover:bg-slate-500 transform duration-500 ease-out cursor-pointer'
+                        />
+                        
+                    </div>
+                </form>
+                <div className="flex justify-center mt-4">
+                    {msg && <Alerta 
+                        alerta={ alerta }
+                    />}
                 </div>
+                
                 {shortLink && (
                 <div className="flex w-full justify-center gap-3 mt-8 md:mt-3 items-center">
                     <p>URL acortada:</p>
@@ -96,10 +119,10 @@ const Home = ()=>{
                         ><FaClipboard /></button>
                 </div>
                 )}
-                {error && <p className="bg-red-500 h-auto w-full md:w-[50%] mx-auto mt-3  p-2 text-white font-bold uppercase rounded-sm text-center">{error}</p>}
             </div>
+
             <div className="flex w-full justify-center items-center">
-                <Link to="/dashboard" className="btn">Gestiona tus enlaces</Link>
+                <Link to="/login" className="btn">Gestiona tus enlaces</Link>
                 <Link to="https://github.com/Rob-Dev007/AppWebUrlShortener" 
                 className="btn"
                 target="_blank">Empieza en github</Link>
