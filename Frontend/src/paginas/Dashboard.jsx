@@ -12,11 +12,12 @@ const Dashboard = ()=>{
     const [ urlDestino, setUrlDestino ] = useState('');
     const [ customUrl, setCustomUrl ] = useState('');
     const [ descripcion, setDescripcion ] = useState('');
+    const [id, setId] = useState(null);
 
     const [ alerta, setAlerta ] = useState({});
 
     const { theme } = UseTheme();
-    const { guardarUrl, urlRecortada } = useUrl();
+    const { guardarUrl, urlRecortada, editarUrl } = useUrl();
 
     const handleSubmit = async e =>{
         e.preventDefault();
@@ -29,15 +30,59 @@ const Dashboard = ()=>{
             return;
         };
 
+        /**if(urlDestino){
+            setAlerta({
+                msg: 'Url ya existe',
+                error:  true
+            })
+        }**/
+
+        const datos = { urlDestino, customUrl, descripcion };
+      
+        if (id) {
+          // Si hay un id, significa que estamos editando
+          try {
+            await editarUrl(id, datos); // Llama a la función para editar la URL
+            setAlerta({ 
+                msg: 'URL editada correctamente', 
+                error: false 
+            });
+          } catch (error) {
+            setAlerta({ 
+                msg: 'Hubo un error al editar la URL', 
+                error: true 
+            });
+          }
+        } else {
+          // Si no hay id, significa que estamos creando
+          guardarUrl(datos);
+        }
+      
+        // Resetea el formulario
+        setUrlDestino('');
+        setCustomUrl('');
+        setDescripcion('');
+        setId(null);
+        setMostrarForm(false);
+
         setAlerta({});
         guardarUrl({ urlDestino, customUrl, descripcion });
     }
 
+    const mostrarFormEditar = (url) => {
+        setId(url._id); // Establece el ID de la URL que quieres editar
+        setUrlDestino(url.urlDestino || '');
+        setCustomUrl(url.customUrl || '');
+        setDescripcion(url.descripcion || '');
+        setMostrarForm(true); 
+    };
+
+
     const { msg } = alerta;
 
     return(
-        <div className='container mx-auto'>
-            <div className='flex justify-between items-center mx-2'>
+        <div className='container'>
+            <div className='flex justify-between items-center'>
                 <form className="input-container">
                     <input 
                     className= {`${theme === 'dark' ? 'bg-stone-800' : 'bg-white'} input-box`} 
@@ -63,6 +108,7 @@ const Dashboard = ()=>{
                     <Urls 
                         key={ url._id }
                         url={ url }
+                        mostrarFormEditar={ mostrarFormEditar }
                     />
                  ))  
                 }
@@ -83,10 +129,10 @@ const Dashboard = ()=>{
                 </>
             </div>
             {mostrarForm && 
-            <div className='fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40'>
-                <div className= 'rounded-xl fixed inset-0 flex justify-center items-center z-50'>
+            <div className='fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm z-40 mx-auto'>
+                <div className= 'rounded-xl fixed inset-0 lg:flex mx-auto justify-center items-center z-50'>
                     <form 
-                        className={`${mostrarForm ? 'block' : 'hidden'} ${theme === 'dark' ? 'bg-stone-800' : 'bg-white'} flex flex-col gap-4 w-full md:w-3/4 lg:w-1/3 h-2/3 lg:h-3/5 px-4 py-8 rounded-xl mx-1`}
+                        className={`${mostrarForm ? 'block' : 'hidden'} ${theme === 'dark' ? 'bg-stone-800' : 'bg-white'} flex flex-col gap-4 w-full md:w-3/4 lg:w-1/3 h-2/3 lg:h-3/5 px-4 py-8 rounded-xl mx-auto`}
                         onSubmit={ handleSubmit }
                      >
                     <label 
@@ -136,7 +182,7 @@ const Dashboard = ()=>{
                         <input
                         className='hover:text-gray-400 font-black cursor-pointer'
                         type="submit"
-                        value="Crear Url"
+                        value={id ? "Editar URL" : "Crear URL"}
                         />
                     </div>
                     </form>
