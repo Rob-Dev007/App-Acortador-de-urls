@@ -5,52 +5,33 @@ import { FaClipboard } from "react-icons/fa";
 import Swal from "sweetalert2";
 import UseTheme from "../hooks/UseTheme";
 import Alerta from "../helpers/Alerta"
+import clienteAxios from "../config/axios";
 
 const Home = ()=>{
 
-    const [ originalUrl, setOriginalUrl ] = useState('');
-    const [ shortLink, setShortLink ] = useState('');
+    const [ urlDestino, setUrlDestino ] = useState('');
+    const [ shortUrl, setShortUrl ] = useState('');
     const [ alerta, setAlerta ] = useState({});
 
     const { theme } = UseTheme();
 
-    const handleSubmit = e=>{
+    const handleSubmit = async e=>{
         e.preventDefault();
 
-        if(!originalUrl){
+        if(!urlDestino){
             setAlerta({
                 msg: '¡ERROR! Por favor, inténtalo nuevamente.',
                 error: true
             })
         }
-    };
 
-    const urlShort = async ()=>{
         try {
-            const response = await fetch('https://shrtlnk.dev/api/v2/link', {
-                method: 'POST',
-                headers: {
-                    'api-key': 'iDrrth2R8FDGRnTGRIupCRNIG3jhbZr5Gx7hHRpE2TV8H',
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                  url: originalUrl, //Link original tipado
-                }),
-              });
-
-            if(!response.ok){
-                throw new Error('Error al acortar el enlace');
-            }
-
-            const data = await response.json();
-            setShortLink(data.shrtlnk);
-            setError('');
-
+            const response = await clienteAxios.post('/public/shorten', { urlDestino } );
+            setShortUrl(response.data.shortUrl);
         } catch (error) {
             console.log(error);
         }
-    }
+    };
 
     const showAlerta = ()=>{
         Swal.fire({
@@ -67,7 +48,7 @@ const Home = ()=>{
     };
 
     const copyLink = ()=>{
-        navigator.clipboard.writeText(shortLink)
+        navigator.clipboard.writeText(shortUrl)
         .then(()=> showAlerta())
         .catch((error) => console.log('Error al copiar el enlace', error))
     }
@@ -91,9 +72,9 @@ const Home = ()=>{
                     <input 
                         className={`${ theme === 'dark' ? 'bg-gradient-to-r from-stone-700 to-transparent' : 'bg-gradient-to-b from-stone-300 to-transparent ' } flex h-12 w-full bg-gradient-to-tr from-stone-200 to-transparent outline-none p-3 rounded-md md:text-xl text-lg`}
                         placeholder="Recorta tu url"
-                        type="texto"
-                        value={ originalUrl }
-                        onChange={ e => setOriginalUrl(e.target.value) }/>
+                        type="url"
+                        value={ urlDestino }
+                        onChange={ e => setUrlDestino(e.target.value) }/>
                     <div className="flex justify-end mt-3 md:mt-2 gap-8">
                         <input 
                         type="submit"
@@ -109,10 +90,10 @@ const Home = ()=>{
                     />}
                 </div>
                 
-                {shortLink && (
+                {shortUrl && (
                 <div className="flex w-full justify-center gap-3 mt-8 md:mt-3 items-center">
                     <p>URL acortada:</p>
-                        <a href={ shortLink } target="_blank" rel="noopener noreferrer"><strong>{ shortLink }</strong></a>
+                        <a href={ urlDestino } target="_blank" rel="noopener noreferrer"><strong>{ shortUrl }</strong></a>
                         <button 
                         className="bg-green-500 h-8 w-8 flex justify-center items-center rounded-md"
                         onClick={ copyLink }
