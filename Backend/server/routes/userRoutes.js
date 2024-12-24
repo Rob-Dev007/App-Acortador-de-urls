@@ -5,7 +5,6 @@ import CheckAuth from '../../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-
 //Area Publica
 router.post('', registrar);
 router.get('/confirmar/:token', confirmar);

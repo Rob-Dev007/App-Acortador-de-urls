@@ -7,7 +7,11 @@ const UrlSchema = mongoose.Schema({
         required: true, 
         trim: true 
     },
-    customUrl: String,
+    customUrl: {
+        type: String,
+        unique: true, 
+        trim: true,
+    },
     descripcion: String,
     clicks: { 
         type: Number, 
