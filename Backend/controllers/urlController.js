@@ -4,9 +4,9 @@ import mongoose from "mongoose";
 
 const agregarUrl = async(req, res)=>{
 
-    const { urlDestino } = req.body;
+    const { urlDestino, customUrl } = req.body;
 
-    const url = await Url.findOne({ urlDestino });
+    const url = await Url.findOne({ urlDestino, customUrl, userId: req.user._id });
 
     if(url){
         const error = new Error('Url ya existe');
@@ -14,10 +14,11 @@ const agregarUrl = async(req, res)=>{
     }
 
     try {
+        const shortUrlId = customUrl || shortid.generate(); // Genera un alias único si no se proporciona uno
         const newUrl = new Url({
             ...req.body,
             userId : req.user._id,
-            shortUrlId: shortid.generate()
+            customUrl:  shortUrlId
         });
 
         const urlGuardado = await newUrl.save();
@@ -115,28 +116,92 @@ const eliminarUrl = async(req, res)=>{
     }
 }
 
+const incrementarClicks = async (req, res) => {
+    const { customUrl } = req.params;
+
+    try {
+        const url = await Url.findOneAndUpdate(
+            {
+                $or: [
+                  { customUrl }, // Busca como alias personalizado
+                  { shortUrlId: customUrl }, // Busca como shortUrlId generado automáticamente
+                ],
+            },
+            { $inc: { clicks: 1 } }, // Incrementa el campo clicks en 1
+            { new: true } //Devuelve el elemento actualizado
+        );
+
+        if (!url) {
+            return res.status(404).json({ msg: "URL no encontrada" });
+        }
+
+       res.status(200).json({ msg: 'Url actualizado correctamente', clicks: url.clicks })
+    } catch (error) {
+        res.status(500).json({ msg: "Error al incrementar clicks", error });
+        console.log(`Buscando URL con shortUrlId: ${req.params.shortUrlId}`);
+    }
+
+    console.log(`Buscando URL con shortUrlId: ${req.params.shortUrlId}`);
+};
+
+const searchUrl = async (req, res) => {
+    const { search } = req.query; // Recibe el término de búsqueda como un parámetro de consulta.
+
+    try {
+        const urls = await Url.find({
+            $or: [
+                { customUrl: { $regex: search, $options: "i" } },
+            ],
+            userId: req.user._id, // Asegura que la búsqueda sea del usuario autenticado.
+        });
+
+        if (!urls.length) {
+            return res.status(404).json({ msg: "No se encontraron resultados" });
+        }
+
+        res.json(urls);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ msg: "Error interno del servidor" });
+    }
+};
+
+const urlStorage = {};
 
 const shortenUrlPublic = async(req, res)=>{
-    const { urlDestino } = req.body;
+  const { urlDestino } = req.body;
 
-    if(!urlDestino){
-        const error = new Error('La url es obligatoria');
-        return res.status(400).json({ msg: error.message });
-    }
+  try {
+    const shortUrlId = shortid.generate();
+    const shortUrl = `${req.protocol}://${req.get('host')}/${shortUrlId}`;
 
-    try{
-        const shortUrlId = shortid.generate();
+    urlStorage[shortUrlId] = urlDestino;
 
-        const shortUrl = `${process.env.URL_FRONTEND}/${shortUrlId}`;
+    res.status(201).json({
+        msg: 'Url recortada con éxito',
+        shortUrl
+    });
 
-        res.status(201).json({
-            message: 'URL recortada con éxito',
-            urlDestino,
-            shortUrl
-        });
-    }catch(error){
+
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+const redirectPublic = async(req, res)=>{
+    const { shortUrlId } = req.params; 
+    try {
+        const urlDestino = urlStorage[shortUrlId];
+
+        if(urlDestino){
+            return res.redirect(urlDestino);
+        }
+
+        res.status(404).json('Url no encontrada');
+    } catch (error) {
         console.log(error);
     }
+
 }
 
 
@@ -146,5 +211,8 @@ export {
     obtenerUrl,
     actualizarUrl,
     eliminarUrl,
-    shortenUrlPublic
+    incrementarClicks,
+    searchUrl,
+    shortenUrlPublic,
+    redirectPublic,
 }

@@ -43,7 +43,7 @@ const Login = ()=>{
 
     const { msg } = alerta;
     return(
-        <div id="login" className="container mx-auto p-8 md:grid md:grid-col justify-center items-center">
+        <div id="login" className="container mx-auto p-4 md:grid md:grid-col justify-center items-center">
              <h2 className="font-bold text-5xl text-center my-8 md:my-20">Ingresa a tu cuenta</h2>
             { msg && 
             <Alerta 
