@@ -95,13 +95,14 @@ export const UrlProvider = ({ children })=>{
         }
     }
 
+
     return(
         <UrlContext.Provider
             value={{
                 urlRecortada,
                 guardarUrl,
                 editarUrl,
-                eliminarUrl
+                eliminarUrl,
             }}
         >
             { children }
