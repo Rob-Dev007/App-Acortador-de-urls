@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import shortid from "shortid";
+import fechaFormateada from "../../helpers/formatearFecha.js";
 
 const UrlSchema = mongoose.Schema({
     urlDestino: { 
@@ -16,10 +17,6 @@ const UrlSchema = mongoose.Schema({
     clicks: { 
         type: Number, 
         default: 0 
-    },
-    createdAt: { 
-        type: Date, 
-        default: Date.now 
     },
     userId: { 
         type: mongoose.Schema.Types.ObjectId, 

@@ -61,7 +61,7 @@ body, html{
 }
 
 .input-icon{
-    @apply absolute right-48 md:right-52 top-[17%] translate-y-1/2
+    @apply absolute right-64 md:right-52 top-[17%] translate-y-1/2
 }
 
 .underline-hover{

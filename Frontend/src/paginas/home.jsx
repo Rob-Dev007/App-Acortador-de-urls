@@ -20,16 +20,20 @@ const Home = ()=>{
 
         if(!urlDestino){
             setAlerta({
-                msg: '¡ERROR! Por favor, inténtalo nuevamente.',
+                msg: '¡ERROR! Url necesario.',
                 error: true
             })
+            return;
         }
 
         try {
             const response = await clienteAxios.post('/public/shorten', { urlDestino } );
             setShortUrl(response.data.shortUrl);
         } catch (error) {
-            console.log(error);
+            setAlerta({
+                msg: response.data.error.msg,
+                error: true
+            })
         }
     };
 
@@ -91,9 +95,9 @@ const Home = ()=>{
                 </div>
                 
                 {shortUrl && (
-                <div className="flex w-full justify-center gap-3 mt-8 md:mt-3 items-center">
+                <div className="flex flex-col lg:flex-row w-full justify-center gap-3 mt-8 md:mt-3 items-center">
                     <p>URL acortada:</p>
-                        <a href={ urlDestino } target="_blank" rel="noopener noreferrer"><strong>{ shortUrl }</strong></a>
+                        <a href={ shortUrl } target="_blank" rel="noopener noreferrer"><strong>{ shortUrl }</strong></a>
                         <button 
                         className="bg-green-500 h-8 w-8 flex justify-center items-center rounded-md"
                         onClick={ copyLink }

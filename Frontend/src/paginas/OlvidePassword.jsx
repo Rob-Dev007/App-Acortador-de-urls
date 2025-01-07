@@ -41,8 +41,8 @@ const OlvidePassword = ()=>{
     const { msg } = alerta;
 
     return(
-        <div id="olvide-password" className="mx-2 md:mx-auto p-2 flex flex-col items-center justify-center">
-            <h2 className="font-bold text-5xl my-24 text-center">Recupera tu cuenta</h2>
+        <div id="olvide-password" className="md:mx-auto p-2 flex flex-col items-center justify-center">
+            <h2 className="font-bold text-5xl mt-20 text-center">Recupera tu cuenta</h2>
             {msg && <Alerta 
                 alerta={ alerta }
             />}

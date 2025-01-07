@@ -1,13 +1,43 @@
 import  { FaTrashAlt, FaCog, FaClipboard } from 'react-icons/fa';
 import useUrl from '../hooks/useUrl';
 import Swal from 'sweetalert2';
-
+import clienteAxios from '../config/axios';
+import { useState } from 'react';
 
 const Urls = ({ url, mostrarFormEditar })=>{
 
-    const { urlDestino, customUrl, descripcion } = url;
+    const { urlDestino, customUrl, descripcion, clicks: initialClicks, createdAt } = url;
     const { eliminarUrl } = useUrl();
+
+    const [ clicks, setClicks ] = useState(initialClicks);
     
+
+    const fechaFormateada = new Date(createdAt).toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+    });
+
+    
+    const handleLinkClick = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            const config = {
+                headers : {
+                    "Content-Type" : "application/json",
+                    Authorization : `Bearer ${token}`
+                }
+            }
+            // Llama a la API para incrementar los clics
+            const { data }  = await clienteAxios.get(`/urls/clicks/${ customUrl }`, config);
+
+            //Actualizar el estado con el nuevo numero de clicks;
+            setClicks(data.clicks);
+        } catch (error) {
+            console.error('Error al incrementar los clics:', error);
+        }
+    };
+
     const showAlert = ()=>{
          Swal.fire({
                     title : '¡Aviso!',
@@ -57,11 +87,12 @@ const Urls = ({ url, mostrarFormEditar })=>{
     return(
         <div className='p-4 border-2 shadown-lg lg:w-1/2 w-full'>
             <div className='flex justify-between'>
-                <a className='text-blue-400 font-bold' href={ urlDestino } target='_blank'>
-                { customUrl }
+                <a className='text-blue-400 font-bold' href={ urlDestino } target='_blank' onClick={ handleLinkClick } >
+                    { customUrl }
                 </a>
                 
                 <div className='flex justify-between gap-4'>
+                    <p>Clicks: <strong>{ clicks }</strong></p>
                     <button onClick={ handleCopy }>
                         <FaClipboard />
                     </button>
@@ -75,8 +106,9 @@ const Urls = ({ url, mostrarFormEditar })=>{
             </div>
             <div className='overflow-hidden text-ellipsis whitespace-nowrap'>
                 <p className='my-4'> { urlDestino }</p>
-                <div className='flex justify-between'>
+                <div className='flex gap-4 lg:gap-0 flex-col lg:flex-row justify-between'>
                     <p className='font-semibold'> { descripcion }</p>
+                    <p> Creado el: <span className='font-thin'>{ fechaFormateada }</span></p>
                 </div>
             </div>
         </div>
