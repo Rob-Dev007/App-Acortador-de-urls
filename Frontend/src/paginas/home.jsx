@@ -27,11 +27,11 @@ const Home = ()=>{
         }
 
         try {
-            const response = await clienteAxios.post('/public/shorten', { urlDestino } );
-            setShortUrl(response.data.shortUrl);
+            const { data } = await clienteAxios.post('/public/shorten', { urlDestino } );
+            setShortUrl(data.shortUrl);
         } catch (error) {
             setAlerta({
-                msg: response.data.error.msg,
+                msg: data.error.msg,
                 error: true
             })
         }
@@ -76,7 +76,7 @@ const Home = ()=>{
                 onSubmit={ handleSubmit }
                 >
                     <input 
-                        className={`${ theme === 'dark' ? 'bg-gradient-to-r from-stone-700 to-transparent' : 'bg-gradient-to-b from-stone-300 to-transparent ' } flex h-12 w-full bg-gradient-to-tr from-stone-200 to-transparent outline-none p-3 rounded-md md:text-xl text-lg`}
+                        className={`${ theme === 'dark' ? 'bg-gradient-to-r from-stone-700 to-transparent' : 'bg-gradient-to-b from-stone-300 to-transparent ' } flex h-12 w-full bg-gradient-to-tr from-stone-200 to-transparent outline-none p-3 rounded-md md:text-xl text-lg border-blue-200 #17A398 #F4D03F`}
                         placeholder="Recorta tu url"
                         type="url"
                         value={ urlDestino }
