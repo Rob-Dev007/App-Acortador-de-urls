@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 import shortid from "shortid";
-import fechaFormateada from "../../helpers/formatearFecha.js";
 
 const UrlSchema = mongoose.Schema({
     urlDestino: { 

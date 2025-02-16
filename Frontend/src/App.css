@@ -73,7 +73,7 @@ body, html{
     duration-500
     before:content-['']
     before:absolute
-    before:-bottom-1
+    before:bottom-2
     before:left-1/2
     before:-translate-x-1/2
     before:w-0
@@ -86,7 +86,7 @@ body, html{
     before:from-gray-600
     before:via-slate-400
     before:to-zinc-500
-    hover:before:w-full
+    hover:before:lg:w-full
     hover:before:opacity-100
 };
 

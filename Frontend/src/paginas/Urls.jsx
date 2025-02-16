@@ -34,7 +34,7 @@ const Urls = ({ url, mostrarFormEditar })=>{
             //Actualizar el estado con el nuevo numero de clicks;
             setClicks(data.clicks);
         } catch (error) {
-            console.error('Error al incrementar los clics:', error);
+            console.error('Error al incrementar los clicks:', error);
         }
     };
 
@@ -85,7 +85,7 @@ const Urls = ({ url, mostrarFormEditar })=>{
     }
 
     return(
-        <div className='p-4 border-2 shadown-lg lg:w-1/2 w-full'>
+        <div className='p-4 border-2 shadown-lg w-full my-4 lg:my-0'>
             <div className='flex justify-between'>
                 <a className='text-blue-400 font-bold' href={ urlDestino } target='_blank' onClick={ handleLinkClick } >
                     { customUrl }

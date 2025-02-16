@@ -140,32 +140,27 @@ const incrementarClicks = async (req, res) => {
         res.status(500).json({ msg: "Error al incrementar clicks", error });
         console.log(`Buscando URL con shortUrlId: ${req.params.shortUrlId}`);
     }
-
-    console.log(`Buscando URL con shortUrlId: ${req.params.shortUrlId}`);
 };
 
 const searchUrl = async (req, res) => {
-    const { search } = req.query; // Recibe el término de búsqueda como un parámetro de consulta.
-
+    const { query } = req.query;  // Término de búsqueda enviado en la query del URL
+    
     try {
+        // Realiza la búsqueda en las URLs, buscando en el destino o en el alias
         const urls = await Url.find({
             $or: [
-                { customUrl: { $regex: search, $options: "i" } },
+                { customUrl: { $regex: query, $options: 'i' } }   // Busca en customUrl (sin distinguir mayúsculas/minúsculas)
             ],
-            userId: req.user._id, // Asegura que la búsqueda sea del usuario autenticado.
+            userId: req.user._id  // Asegúrate de que el usuario sea el mismo que el que hace la búsqueda
         });
-
-        if (!urls.length) {
-            return res.status(404).json({ msg: "No se encontraron resultados" });
-        }
 
         res.json(urls);
     } catch (error) {
         console.error(error);
-        res.status(500).json({ msg: "Error interno del servidor" });
+        res.status(500).json({ msg: "Error al buscar las URLs", error });
     }
 };
-
+ 
 const urlStorage = {};
 
 const shortenUrlPublic = async(req, res)=>{
@@ -190,6 +185,11 @@ const shortenUrlPublic = async(req, res)=>{
 
 const redirectPublic = async(req, res)=>{
     const { shortUrlId } = req.params; 
+
+    if (!shortUrlId) {
+        return res.status(400).json({ msg: "El parámetro shortUrlId es obligatorio" });
+      }
+    
     try {
         const urlDestino = urlStorage[shortUrlId];
 

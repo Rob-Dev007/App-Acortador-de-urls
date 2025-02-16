@@ -17,7 +17,7 @@ const AppContent = ()=>{
   const { theme } = UseTheme();
 
     return(
-        <div className = {`${theme === 'dark' ? 'darkTheme' : 'lightTheme'} vh-screen w-full`}>
+        <div className = {`${theme === 'dark' ? 'darkTheme' : 'lightTheme'} w-full`}>
           <Routes>
             <Route path="/" element={ <HeaderAndFooter />}>
               {/*Ruta publica*/}
