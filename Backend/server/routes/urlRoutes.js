@@ -19,7 +19,7 @@ router
     .put(CheckAuth, actualizarUrl)
     .delete(CheckAuth, eliminarUrl)
 
-router.get('/search', CheckAuth, searchUrl);
+router.get('/search/searchTerm', CheckAuth, searchUrl);
 router.get('/clicks/:customUrl', CheckAuth, incrementarClicks);
 
     

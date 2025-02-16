@@ -1,11 +1,14 @@
+import { useState, useEffect } from 'react';
 import { ImFilesEmpty } from 'react-icons/im';
-import { useState } from 'react';
-import UseTheme from '../hooks/UseTheme';
-import Alerta from '../helpers/Alerta'
 import { FaSearch } from 'react-icons/fa';
-import useUrl from '../hooks/useUrl';
+
+import Alerta from '../helpers/Alerta'
 import Urls from './Urls';
 import clienteAxios from '../config/axios';
+
+import UseTheme from '../hooks/UseTheme';
+import useUrl from '../hooks/useUrl';
+
 
 const Dashboard = ()=>{
 
@@ -13,9 +16,11 @@ const Dashboard = ()=>{
     const [ urlDestino, setUrlDestino ] = useState('');
     const [ customUrl, setCustomUrl ] = useState('');
     const [ descripcion, setDescripcion ] = useState('');
-    const [ searchTerm, setSearchTerm ] = useState("");
-    const [ searchResults, setSearchResults ] = useState([]);
+    const [ searchQuery, setSearchQuery ] = useState('');
+    const [ urlsFiltradas, setUrlsFiltradas ] = useState([]);
+    const [ debounceTimeout, setDebounceTimeout ] = useState(null);
     const [ id, setId ] = useState(null);
+
 
     const [ alerta, setAlerta ] = useState({});
 
@@ -85,60 +90,60 @@ const Dashboard = ()=>{
         setMostrarForm(true); 
     };
 
-    const handleSearch = async e =>{
+    useEffect(() => {
+        if (searchQuery.length > 0) {
+            // Limpiar el timeout anterior si el usuario está escribiendo
+            if (debounceTimeout) clearTimeout(debounceTimeout);
 
-        e.preventDefault();
+            // Establecer un nuevo timeout para hacer la solicitud después de un delay
+            const timeout = setTimeout(() => {
+                // Llamar a la API para obtener las URLs filtradas
+                const fetchUrls = async () => {
+                    try {
 
-        if (!searchTerm.trim()) {
-            setAlerta({
-                msg: "El campo de búsqueda no puede estar vacío",
-                error: true,
-            });
-            return; 
-        }
-    
-        try {
-            const { data } = await clienteAxios.get(`/urls/search`, {
-                params: { search: searchTerm.trim() }, // Envía el término de búsqueda como parámetro.
-                headers: {
-                    headers : {
-                        "Content-Type" : "application/json",
-                        Authorization : `Bearer ${token}`
+                        const token = localStorage.getItem('token');
+                        const config = {
+                            headers : {
+                            "Content-Type" : "application/json",
+                            Authorization : `Bearer ${token}`
+                            }
+            }
+                        const { data } = await clienteAxios.get(`/urls/search/searchTerm?query=${searchQuery}`, config );
+                        setUrlsFiltradas(data);
+                    } catch (error) {
+                        console.error('Error al buscar URLs:', error);
+                        setAlerta({ msg: 'Error al buscar las URLs', error: true });
                     }
-                },
-            });
-            setSearchResults(data); // Almacena los resultados en el estado.
-        } catch (error) {
-            setAlerta({
-                msg: error.response?.data?.msg || "Error al buscar URLs",
-                error: true,
-            });
+                };
+
+                fetchUrls();
+            }, 300);  // Retrasa la búsqueda 500 ms después de que el usuario deja de escribir
+
+            // Guardar el timeout para cancelarlo si el usuario sigue escribiendo
+            setDebounceTimeout(timeout);
+        } else {
+            setUrlsFiltradas([]);
         }
-        //setSearchResults([]);
-    }
+
+        // Limpiar el timeout cuando el componente se desmonte
+        return () => clearTimeout(debounceTimeout);
+    }, [searchQuery]);
 
     const { msg } = alerta;
 
     return(
-        <div className='container'>
+        <div className=''>
             <div className='flex justify-between items-center mx-2 lg:mx-0'>
-                <form className="input-container">
+                <div className="input-container">
                     <input 
                     className= {`${theme === 'dark' ? 'bg-stone-800' : 'bg-white'} input-box`} 
                     type="search" 
                     placeholder="Link personalizado"
-                    onChange={ e=> setSearchTerm(e.target.value) }
-                    value={ searchTerm }
+                    value={ searchQuery }
+                    onChange={ e=>setSearchQuery(e.target.value) }
                     />
-                    <button 
-                    type="submit" 
-                    onSubmit={handleSearch} 
-                    disabled={!searchTerm.trim()}
-                    className={!searchTerm.trim() ? 'opacity-50 cursor-not-allowed' : ''}
-                    >
-                        <FaSearch className=""/>
-                    </button>
-                </form>
+                        <FaSearch className="input-icon"/>
+                </div>
                 <div>
                     <button 
                     className='p-2 border-2 font-bold rounded-xl'
@@ -148,25 +153,25 @@ const Dashboard = ()=>{
                     </button>
                 </div>
             </div>
-            <div className='flex items-center flex-col gap-4 my-20 lg:my-24 lg:mx-0 mx-2'>
+            <div className='md:grid lg:grid-cols-2 gap-4 my-12 mx-2'>
                 <>
-                    {searchTerm ? (
-                        searchResults.length > 0 ? (
-                            // Si hay un término de búsqueda y se encontraron resultados
-                            urlRecortada.map((url) => (
-                                    <Urls 
-                                        key={ url._id }
-                                        url={ url }
-                                        mostrarFormEditar={ mostrarFormEditar }
-                                    />
+                    {searchQuery ? (
+                        urlsFiltradas.length > 0 ? (
+                            urlsFiltradas.map((url) => (
+                                <Urls 
+                                    key={url._id}
+                                    url={url}
+                                    mostrarFormEditar={mostrarFormEditar}
+                                />                         
                             ))
                         ) : (
-                            // Si hay un término de búsqueda pero no se encontraron resultados
-                            <p>No se encontraron resultados para "{searchTerm}"</p>
+                            <div className="mx-auto">
+                                <h2 className="text-2xl font-bold text-center mx-auto">Sin enlaces por el momento</h2>
+                            </div>
                         )
-                        ) : (
+                    ) : (
                          // Si no hay un término de búsqueda, muestra todos los elementos
-                        urlRecortada.length > 0 ? (
+                         urlRecortada.length > 0 ? (
                             <>
                                 {urlRecortada.map((url) => (
                                     <Urls
@@ -189,7 +194,9 @@ const Dashboard = ()=>{
                                 </button>
                             </div>
                         )
-                    )}
+                    )
+                        
+                    }
                 </>
             </div>
             {mostrarForm && 
