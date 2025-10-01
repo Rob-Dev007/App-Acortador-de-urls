@@ -6,22 +6,17 @@ body, html{
     @apply m-0 p-0 
   }
 
-.color-primario{
-    color: #FFD700
-
-    
-}
 
 .lightTheme{
-    @apply bg-gray-50 text-black 
+    @apply bg-gradient-to-br from-gray-50 via-blue-100 to-gray-100 text-gray-900 h-full
 }
 
 .darkTheme{
-    @apply bg-black/80 text-white
+    @apply bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white h-full
 }  
 
 .menu-dropdown{
-    @apply absolute w-[170px] w-24  lg:w-[200px] px-1 md:px-3 py-0 md:py-5 top-[65px] right-[8px] md:right-[20px] border-solid border-2 border-slate-500 bg-white rounded-lg text-stone-400
+    @apply absolute w-[170px] w-24  lg:w-[200px] px-1 md:px-3 py-0 md:py-5 top-[65px] right-[8px] md:right-[20px] border-solid border-2 border-slate-500 bg-white rounded-lg text-cyan-500
 }
 
 .menu-dropdown::before{
@@ -49,7 +44,7 @@ body, html{
 }
 
 .btn{
-    @apply rounded-lg p-3 bg-gradient-to-b from-stone-400 to-stone-800 mx-5 my-20 text-white font-bold text-center text-sm lg:text-lg hover:bg-gradient-to-b hover:from-stone-500 hover:to-stone-900 transition-all duration-500 ease-out
+    @apply rounded-lg p-3 bg-gradient-to-b from-indigo-400 to-cyan-600 mx-5 my-8 text-white font-bold text-center text-sm lg:text-lg hover:bg-gradient-to-b hover:from-indigo-500 hover:to-cyan-700 transition-all duration-500 ease-out
 }
 
 .input-container{
@@ -57,11 +52,11 @@ body, html{
 }
 
 .input-box{
-    @apply pl-8 border-solid border-slate-500 md:border-4 border-2 rounded-md p-2 outline-none
+    @apply pl-8 border-solid border-indigo-500 md:border-4 border-2 rounded-md p-2 outline-none 
 }
 
 .input-icon{
-    @apply absolute right-64 md:right-52 top-[17%] translate-y-1/2
+    @apply absolute right-52 top-[17%] translate-y-1/2
 }
 
 .underline-hover{
@@ -73,7 +68,7 @@ body, html{
     duration-500
     before:content-['']
     before:absolute
-    before:bottom-2
+    before:bottom-0
     before:left-1/2
     before:-translate-x-1/2
     before:w-0
@@ -83,9 +78,9 @@ body, html{
     before:transition-all
     before:duration-500
     before:bg-gradient-to-r
-    before:from-gray-600
-    before:via-slate-400
-    before:to-zinc-500
+    before:from-indigo-600
+    before:via-cyan-400
+    before:to-green-500
     hover:before:lg:w-full
     hover:before:opacity-100
 };

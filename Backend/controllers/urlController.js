@@ -29,14 +29,6 @@ const agregarUrl = async(req, res)=>{
 
 };
 
-const obtenerUrls = async(req, res)=>{
-    const urls = await Url.find()
-    .where('userId')
-    .equals(req.user);
-
-    res.json(urls);
-}
-
 const obtenerUrl = async (req, res)=>{
     const { id } = req.params;
     
@@ -61,7 +53,6 @@ const actualizarUrl = async(req, res)=>{
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({ msg: 'El id proporcionado no es válido.' });
     }
-
 
     try{
         const url = await Url.findById( id );
@@ -135,40 +126,23 @@ const incrementarClicks = async (req, res) => {
             return res.status(404).json({ msg: "URL no encontrada" });
         }
 
-       res.status(200).json({ msg: 'Url actualizado correctamente', clicks: url.clicks })
+       res.status(200).json({ clicks: url.clicks, urlDestino: url.urlDestino })
+       //return res.redirect(url.urlDestino);
     } catch (error) {
         res.status(500).json({ msg: "Error al incrementar clicks", error });
         console.log(`Buscando URL con shortUrlId: ${req.params.shortUrlId}`);
     }
 };
 
-const searchUrl = async (req, res) => {
-    const { query } = req.query;  // Término de búsqueda enviado en la query del URL
-    
-    try {
-        // Realiza la búsqueda en las URLs, buscando en el destino o en el alias
-        const urls = await Url.find({
-            $or: [
-                { customUrl: { $regex: query, $options: 'i' } }   // Busca en customUrl (sin distinguir mayúsculas/minúsculas)
-            ],
-            userId: req.user._id  // Asegúrate de que el usuario sea el mismo que el que hace la búsqueda
-        });
-
-        res.json(urls);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ msg: "Error al buscar las URLs", error });
-    }
-};
- 
 const urlStorage = {};
 
 const shortenUrlPublic = async(req, res)=>{
+
   const { urlDestino } = req.body;
 
   try {
     const shortUrlId = shortid.generate();
-    const shortUrl = `${req.protocol}://${req.get('host')}/${shortUrlId}`;
+    const shortUrl = `${req.protocol}://${req.get('host')}/api/${shortUrlId}`;
 
     urlStorage[shortUrlId] = urlDestino;
 
@@ -176,8 +150,6 @@ const shortenUrlPublic = async(req, res)=>{
         msg: 'Url recortada con éxito',
         shortUrl
     });
-
-
   } catch (error) {
     console.log(error);
   }
@@ -186,33 +158,73 @@ const shortenUrlPublic = async(req, res)=>{
 const redirectPublic = async(req, res)=>{
     const { shortUrlId } = req.params; 
 
-    if (!shortUrlId) {
+    const originalUrl = urlStorage[shortUrlId];
+
+    if (!originalUrl) {
         return res.status(400).json({ msg: "El parámetro shortUrlId es obligatorio" });
       }
     
     try {
-        const urlDestino = urlStorage[shortUrlId];
+        return res.redirect(originalUrl);
 
-        if(urlDestino){
-            return res.redirect(urlDestino);
-        }
-
-        res.status(404).json('Url no encontrada');
     } catch (error) {
         console.log(error);
     }
-
 }
+
+const pagination = async (req, res) => {
+
+  const { search = "", page = 1, limit = 8 } = req.query;
+
+  const safePage = Number(page) > 0 ? Number(page) : 1;
+  const safeLimit = Number(limit) > 0 && Number(limit) <= 50 ? Number(limit) : 8;
+  const skip = (safePage - 1) * safeLimit;
+
+  //Filtro: usuario logueado + customUrl 
+
+  try {
+
+    let filter = { userId: req.user._id }
+
+    if(search && search.trim() !== ''){
+        filter.$or = [
+                { customUrl: {$regex: search, $options: "i"} }
+        ]
+    }
+    const total = await Url.countDocuments(filter);
+
+    console.log(total);
+
+    const urls = await Url.find(filter)
+      .skip(skip)
+      .limit(safeLimit)
+      .sort({ createdAt: -1 })
+      .lean();
+
+    res.json({
+      urls,
+      total,
+      totalPages: Math.ceil(total / safeLimit),
+      currentPage: safePage,
+      hasPrevPage: safePage > 1,
+      hasNextPage: safePage < Math.ceil(total / safeLimit),
+      pageSize: safeLimit,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error en la búsqueda con paginación", 
+    details: error.message  });
+  }
+};
 
 
 export {
     agregarUrl,
-    obtenerUrls,
     obtenerUrl,
     actualizarUrl,
     eliminarUrl,
     incrementarClicks,
-    searchUrl,
     shortenUrlPublic,
     redirectPublic,
+    pagination
 }
