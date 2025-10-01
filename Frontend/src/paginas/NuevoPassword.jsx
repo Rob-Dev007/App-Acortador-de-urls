@@ -3,6 +3,8 @@ import { useParams, Link } from "react-router-dom";
 import Alerta from "../helpers/Alerta";
 import clienteAxios from "../config/axios";
 import UseTheme from "../hooks/UseTheme";
+import Input from "../utils/input";
+import Button from "../utils/button";
 
 const NuevoPassword = ()=>{
 
@@ -64,11 +66,14 @@ const NuevoPassword = ()=>{
 
     }
 
-    
+    const handleChange = (e)=>{
+        setPassword(e.target.value);
+    }
+
     const { msg } = alerta;
     return(
         <div id="olvide-password/:token" className="container mx-auto p-8 grid grid-col items-center justify-center">
-        <h2 className="font-bold text-5xl my-18 text-center">Restablece tu contraseña</h2>
+        <h2 className="font-bold text-4xl text-center text-secondary my-8 md:my-12">Restablece tu contraseña</h2>
             <div className="shadow-xl rounded-xl px-4 py-8 gap-2">
                 { msg && <Alerta 
                     alerta = { alerta }
@@ -78,20 +83,8 @@ const NuevoPassword = ()=>{
                         <form 
                         onSubmit={ handleSubmit }
                         className="flex flex-col w-full gap-4 my-24">
-                            <label className="font-bold my-2">Nueva contraseña</label>
-                            <input 
-                                type="password"
-                                name="password"
-                                value={ password }
-                                onChange={ e => { setPassword(e.target.value) } }
-                                placeholder="Ingresa tu nueva contraseña"
-                                className={`${ theme === 'dark' ? 'bg-stone-800 placeholder:text-gray-500 border-gray-300 focus:border-gray-600 hover:border-b-gray-50' : 'bg-white placeholder:text-gray-500 border-gray-400 focus:border-black hover:border-b-black'} p-2 rounded outline-none border-b-4 text-xl focus:border-b focus:border-b-4 `}
-                            />
-                            <input 
-                                type="submit"
-                                value="Restablecer contraseña"
-                                className="my-3 border-2 rounded bg-gray-400 text-xl p-2 md:w-60 justify-center hover:bg-slate-500 font-bold"
-                            />
+                           <Input label={"Nueva contraseña"} type={"password"} name={"password"} value={ password } changeEvent={ handleChange } placeholder={"Ingresa tu nueva contraseña"}/>
+                            <Button type={"submit"} className="block text-center mt-3 text-lg rounded-full border-4 p-2 hover:bg-gradient-to-r from-secondary to-accent hover:text-white transition-all duration-500 transform ease-out font-bold my-2">Restablecer contraseña</Button>
                         </form>
                         { passwordModificado && 
                         <Link to='/login' className="block text-center my-1 text-lg rounded-full border-4 p-2 hover:bg-slate-500 hover:text-white transition-all duration-500 transform ease-out"><strong>Inicia sesión</strong></Link> 
@@ -104,4 +97,4 @@ const NuevoPassword = ()=>{
 
 };
 
-export default NuevoPassword;
+export default NuevoPassword; 

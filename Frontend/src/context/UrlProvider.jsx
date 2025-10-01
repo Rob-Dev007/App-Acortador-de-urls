@@ -7,10 +7,25 @@ export const UrlProvider = ({ children })=>{
 
     const [ urlRecortada, setUrlRecortada ] = useState([]);
     const [ alerta, setAlerta ] = useState({});
+    const [ page, setPage ] = useState(1);
+    const [ limit ] = useState(8);
+    const [ totalPages, setTotalPages ] = useState(1);
+    const [ search, setSearch ] = useState('');
+    const [ debounceSearch, setDebounceSearch ] = useState(search);
 
     useEffect(()=>{
-        const obtenerUrls = async()=>{
-            try {
+        const handler = setTimeout(()=>{
+            setDebounceSearch(search);
+            setPage(1);
+        }, 500);
+
+        return ()=>{
+            clearTimeout(handler);
+        }
+    },[search]);
+
+    const fetchUrls = async()=>{
+             try {
                 const token = localStorage.getItem('token');
                 if(!token) return
 
@@ -21,14 +36,19 @@ export const UrlProvider = ({ children })=>{
                     }
                 }
 
-                const { data } = await clienteAxios('/urls', config);
-                setUrlRecortada(data);
+                const { data } = await clienteAxios.get( `/urls?page=${page}&limit=${limit}&search=${debounceSearch}`, config);
+
+                setUrlRecortada(data.urls);
+                setTotalPages(data.totalPages);
+                return data;
             } catch (error) {
                 console.log(error);
             }
-        };
-        obtenerUrls();
-    }, [])
+        }
+
+    useEffect(()=>{
+        fetchUrls();
+    },[page, limit, debounceSearch])
 
     const guardarUrl = async(url)=>{
         try {
@@ -41,8 +61,10 @@ export const UrlProvider = ({ children })=>{
             }
             const { data } = await clienteAxios.post('/urls', url, config );
             const { __v, updateAt, ...urlAlmacenado  } = data;
-            setUrlRecortada((prevUrls) => [urlAlmacenado, ...prevUrls]);
 
+
+                setUrlRecortada((prevUrls) => [urlAlmacenado, ...prevUrls]);
+            
             setAlerta({
                 msg: "Url recortada con exito",
                 error: false
@@ -100,9 +122,16 @@ export const UrlProvider = ({ children })=>{
         <UrlContext.Provider
             value={{
                 urlRecortada,
+                fetchUrls,
                 guardarUrl,
                 editarUrl,
                 eliminarUrl,
+                alerta,
+                page,
+                setPage,
+                totalPages,
+                search,
+                setSearch
             }}
         >
             { children }
